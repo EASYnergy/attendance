@@ -1,6 +1,8 @@
 <?php
+require_once 'db.php';
+
 // Allow Cross-Origin requests for the frontend origin
-header("Access-Control-Allow-Origin: http://localhost:5173"); 
+header("Access-Control-Allow-Origin: http://localhost:5173");
 header("Access-Control-Allow-Methods: POST, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type, Accept");
 
@@ -61,21 +63,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt->bindParam(':password', $hashedPassword, PDO::PARAM_STR);
 
         if ($stmt->execute()) {
-            // Return success as JSON
             echo json_encode(['status' => 'success', 'message' => 'Signup successful!']);
             exit;
         } else {
-            // Return failure as JSON
             echo json_encode(['status' => 'error', 'message' => 'Signup failed. Please try again.']);
             exit;
         }
     } catch (PDOException $e) {
-        // Return database error as JSON
         echo json_encode(['status' => 'error', 'message' => 'Database error: ' . $e->getMessage()]);
         exit;
     }
 } else {
-    // Handle invalid request method
     echo json_encode(['status' => 'error', 'message' => 'Invalid request method.']);
     exit;
 }

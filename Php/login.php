@@ -3,24 +3,25 @@
 require_once 'db.php';
 
 // Add CORS headers
-header("Access-Control-Allow-Origin: http://localhost:5173"); // Allow requests from your frontend
-header("Access-Control-Allow-Methods: POST, OPTIONS"); // Allow POST and preflight OPTIONS methods
-header("Access-Control-Allow-Headers: Content-Type, Authorization"); // Allow required headers
+header("Access-Control-Allow-Origin: http://localhost:5173");
+header("Access-Control-Allow-Methods: POST, OPTIONS");
+header("Access-Control-Allow-Headers: Content-Type, Authorization");
 
 // Handle preflight requests
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
-    // Respond to preflight request
     http_response_code(200);
     exit;
 }
 
 // Check if the request method is POST
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Retrieve and sanitize input
-    $student_id = filter_input(INPUT_POST, 'student_id', FILTER_SANITIZE_STRING);
-    $password = filter_input(INPUT_POST, 'password', FILTER_SANITIZE_STRING);
+    // Decode JSON data sent by Svelte
+    $input = json_decode(file_get_contents('php://input'), true);
 
-    // Validate input
+    // Sanitize and validate input
+    $student_id = filter_var($input['student_id'] ?? '', FILTER_SANITIZE_STRING);
+    $password = $input['password'] ?? '';
+
     if (empty($student_id) || empty($password)) {
         echo json_encode(['status' => 'error', 'message' => 'Student ID and password are required.']);
         exit;
@@ -33,23 +34,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt->execute();
 
         // Fetch the user data
-        $user = $stmt->fetch();
+        $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
         if ($user) {
             // Verify the password
             if (password_verify($password, $user['password'])) {
-                // Successful login
                 echo json_encode([
                     'status' => 'success',
                     'message' => 'Login successful!',
-                    'student_id' => $user['student_id']
+                    'student_id' => $user['student_id'],
+                    'firstname' => $user['firstname'],
+                    'lastname' => $user['lastname'],
+                    'email' => $user['email'],
+                    'department' => $user['department']
                 ]);
             } else {
-                // Invalid password
                 echo json_encode(['status' => 'error', 'message' => 'Invalid Student ID or password.']);
             }
         } else {
-            // No user found with the given student_id
             echo json_encode(['status' => 'error', 'message' => 'User not found.']);
         }
     } catch (PDOException $e) {
@@ -57,5 +59,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 } else {
     echo json_encode(['status' => 'error', 'message' => 'Invalid request method.']);
+    exit;
 }
 ?>
