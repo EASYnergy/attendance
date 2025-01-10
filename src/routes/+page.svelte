@@ -1,7 +1,7 @@
 <script lang="ts">
   import { goto } from '$app/navigation';
 
-  let studentId = ''; // Changed from email to Student ID
+  let studentId = ''; // Student ID
   let password = '';
   let firstname = '';
   let lastname = '';
@@ -18,56 +18,82 @@
         body: JSON.stringify(data),
       });
 
+      const responseData = await response.json();
+
       if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(errorText);
+        // Throw the error message from the API response
+        throw new Error(responseData.error || 'An unknown error occurred');
       }
 
-      return await response.json();
+      return responseData; // Return data if successful
     } catch (error) {
-      console.error('API Error:', error);
-      alert('An error occurred. Please try again.');
-      throw error;
+      if (error instanceof Error) {
+        console.error('API Error:', error.message);
+        alert('An error occurred: ' + error.message);
+      } else {
+        console.error('Unknown Error:', error);
+        alert('An unknown error occurred.');
+      }
+      throw error; // Re-throw the error to be handled by the caller
     }
   }
 
-  // Function to handle login
   async function handleLogin() {
     if (studentId.trim() && password.trim()) {
       try {
-        const data = await apiRequest('http://localhost/attendance/login.php', { student_id: studentId, password });
-        alert('Login successful!');
-        goto('/dashboard'); // Navigate to dashboard
-      } catch {
-        alert('Login failed. Please check your credentials.');
+        const data = await apiRequest('http://localhost:5000/api/participant/login', {
+          student_Id: studentId,
+          password,
+        });
+
+        // Store student_Id in localStorage
+        localStorage.setItem('student_Id', data.participant.student_Id);
+
+        // Successful login
+        alert(`Welcome, ${data.participant.firstName}${data.participant.lastName}!`);
+        goto('/dashboard'); // Navigate to the dashboard
+      } catch (error) {
+        // Error already handled in apiRequest
       }
     } else {
       alert('Please fill in both Student ID and password.');
     }
   }
 
-  // Function to handle signup
   async function handleSignup() {
-    if (firstname.trim() && lastname.trim() && email.trim() && department.trim() && studentId.trim() && password.trim()) {
+    if (
+      firstname.trim() &&
+      lastname.trim() &&
+      email.trim() &&
+      department.trim() &&
+      studentId.trim() &&
+      password.trim()
+    ) {
       try {
-        const data = await apiRequest('http://localhost/attendance/signup.php', {
-          firstname,
-          lastname,
+        const data = await apiRequest('http://localhost:5000/api/participant/signup', {
+          student_Id: studentId,
+          password,
+          firstName: firstname,
+          lastName: lastname,
           email,
           department,
-          student_id: studentId,
-          password,
         });
         alert('Signup successful!');
-        isSignup = false; // Switch back to login form
-      } catch {
-        alert('Signup failed. Please try again.');
+        isSignup = false;
+      } catch (error) {
+        if (error instanceof Error) {
+          alert(`Signup failed: ${error.message}`);
+        } else {
+          alert('Signup failed: An unknown error occurred.');
+        }
       }
     } else {
       alert('Please fill in all fields.');
     }
   }
 </script>
+
+
 
 <div class="fixed w-full h-full grid grid-cols-3" style="background-color: #400000;">
   <!-- Left Column -->
@@ -153,6 +179,7 @@
           Already have an account? <button type="button" class="font-semibold text-orange-400 hover:underline" on:click={() => (isSignup = false)}>Login here</button>
         </p>
       {:else}
+      
         <!-- Login Form -->
         <h2 class="text-2xl font-bold text-white text-center mb-6">Login</h2>
         <form on:submit|preventDefault={handleLogin}>

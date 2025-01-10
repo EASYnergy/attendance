@@ -3,7 +3,9 @@
 
     let isSideNavOpen = false;
     let isClosing = false;
+    let fullName = ""; // Variable to store the logged-in user's name
 
+    // Function to toggle the side navigation
     function toggleSideNav() {
         if (isSideNavOpen) {
             isClosing = true;
@@ -16,51 +18,61 @@
         }
     }
 
-    // Close nav when clicking outside
-    function handleOutsideClick(event: MouseEvent) {
-        const sideNav = document.getElementById('side-nav');
-        const easynergyLogo = document.getElementById('easynergy-logo');
-        
-        if (isSideNavOpen && 
-            sideNav && 
-            easynergyLogo && 
-            !sideNav.contains(event.target as Node) && 
-            !easynergyLogo.contains(event.target as Node)
-        ) {
-            toggleSideNav();
+    // Fetch the logged-in user's name
+    async function fetchParticipantDetails() {
+        const student_Id = localStorage.getItem('student_Id');
+        if (!student_Id) {
+            console.log("No student_Id found in localStorage.");
+            return;
+        }
+
+        try {
+            const response = await fetch('http://localhost:5000/api/participant/details', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ student_Id }),
+            });
+
+            if (!response.ok) {
+                const error = await response.json();
+                console.error("Error fetching participant details:", error.message || error);
+                return;
+            }
+
+            const data = await response.json();
+
+            // Ensure reactivity
+            fullName = `${data.firstName} ${data.lastName}`;
+            console.log("Fetched fullName:", fullName); // Debugging log
+        } catch (error) {
+            console.error("Error fetching participant details:", error);
         }
     }
 
+    // Logout function
+    function logout() {
+        localStorage.removeItem('student_Id'); // Clear student ID
+        sessionStorage.clear(); // Clear session storage
+        window.location.href = '/'; // Redirect to login page
+    }
+
+    // Mount component and fetch user details
     onMount(() => {
-        document.addEventListener('click', handleOutsideClick);
-        
-        return () => {
-            document.removeEventListener('click', handleOutsideClick);
-        };
+        fetchParticipantDetails();
     });
-
-    // Define the logout function
-function logout() {
-    // Clear session or token
-    localStorage.removeItem('authToken'); // Example: remove auth token
-    sessionStorage.clear(); // Example: clear session storage
-
-    // Redirect to login or logout endpoint
-    window.location.href = '/'; // Replace with your backend logout route
-}
 </script>
 
 <style>
     .header-container {
         position: fixed;
-        top: 0  ;
+        top: 0;
         left: 0;
         right: 0;
         display: flex;
         justify-content: space-between;
         align-items: center;
         padding: 0 20px;
-        z-index: 900; /* Reduced z-index to be behind the side nav */
+        z-index: 1000; /* Adjust to ensure it appears above other elements */
     }
 
     .right-logos {
@@ -83,10 +95,18 @@ function logout() {
         aria-label="Toggle Side Navigation"
         on:click={toggleSideNav}
         on:keydown={(event) => event.key === 'Enter' && toggleSideNav()}
-        style="background: none; border: none; padding: 0; cursor: pointer;"
-    >
+        style="background: none; border: none; padding: 0; cursor: pointer;">
         <img src="/EASYnergy.png" alt="EASYnergy Logo" class="easynergy-logo"/>
     </button>
+
+    <!-- Logged-in User Info -->
+    <div class="user-info text-black text-lg">
+        {#if fullName}
+            <span>Welcome, {fullName}!</span>
+        {:else}
+            <span>Loading participant details...</span>
+        {/if}
+    </div>
 
     <!-- Right Side Logos -->
     <div class="right-logos">
@@ -94,9 +114,3 @@ function logout() {
         <img src="/gc_new_logo_2018.png" alt="GC Logo" class="w-20 h-auto"/>
     </div>
 </div>
-
-<!-- Side Navigation -->
-
-<head>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
-</head>
