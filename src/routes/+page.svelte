@@ -122,7 +122,7 @@
               id="studentId"
               bind:value={studentId}
               placeholder="Enter your Student ID"
-              class="mt-1 block w-full px-4 py-2 bg-transparent border-2 text-black rounded-lg focus:ring-2 focus:ring-orange-400 focus:outline-none"/>
+              class="mt-1 block w-full px-4 py-2 bg-transparent border-2 text-white rounded-lg focus:ring-2 focus:ring-orange-400 focus:outline-none"/>
           </div>
           <div class="mb-4">
             <label for="password" class="block text-sm font-medium text-white">Password</label>
@@ -131,7 +131,7 @@
               id="password"
               bind:value={password}
               placeholder="Enter your password"
-              class="mt-1 block w-full px-4 py-2 bg-transparent border-2 text-black rounded-lg focus:ring-2 focus:ring-orange-400 focus:outline-none"/>
+              class="mt-1 block w-full px-4 py-2 bg-transparent border-2 text-white rounded-lg focus:ring-2 focus:ring-orange-400 focus:outline-none"/>
           </div>
           <div class="mb-4">
             <label for="firstname" class="block text-sm font-medium text-white">Firstname</label>
@@ -140,7 +140,7 @@
               id="firstname"
               bind:value={firstname}
               placeholder="Enter your firstname"
-              class="mt-1 block w-full px-4 py-2 bg-transparent border-2 text-black rounded-lg focus:ring-2 focus:ring-orange-400 focus:outline-none"/>
+              class="mt-1 block w-full px-4 py-2 bg-transparent border-2 text-white rounded-lg focus:ring-2 focus:ring-orange-400 focus:outline-none"/>
           </div>
           <div class="mb-4">
             <label for="lastname" class="block text-sm font-medium text-white">Lastname</label>
@@ -149,7 +149,7 @@
               id="lastname"
               bind:value={lastname}
               placeholder="Enter your lastname"
-              class="mt-1 block w-full px-4 py-2 bg-transparent border-2 text-black rounded-lg focus:ring-2 focus:ring-orange-400 focus:outline-none"/>
+              class="mt-1 block w-full px-4 py-2 bg-transparent border-2 text-white rounded-lg focus:ring-2 focus:ring-orange-400 focus:outline-none"/>
           </div>
           <div class="mb-4">
             <label for="email" class="block text-sm font-medium text-white">Student Email</label>
@@ -158,7 +158,7 @@
               id="email"
               bind:value={email}
               placeholder="Enter your email"
-              class="mt-1 block w-full px-4 py-2 bg-transparent border-2 text-black rounded-lg focus:ring-2 focus:ring-orange-400 focus:outline-none"/>
+              class="mt-1 block w-full px-4 py-2 bg-transparent border-2 text-white rounded-lg focus:ring-2 focus:ring-orange-400 focus:outline-none"/>
           </div>
           <div class="mb-4">
             <label for="department" class="block text-sm font-medium text-white">Department</label>
@@ -167,7 +167,7 @@
               id="department"
               bind:value={department}
               placeholder="Enter your department"
-              class="mt-1 block w-full px-4 py-2 bg-transparent border-2 text-black rounded-lg focus:ring-2 focus:ring-orange-400 focus:outline-none"/>
+              class="mt-1 block w-full px-4 py-2 bg-transparent border-2 text-white rounded-lg focus:ring-2 focus:ring-orange-400 focus:outline-none"/>
           </div>
           <button
             type="submit"
@@ -190,7 +190,7 @@
               id="studentId"
               bind:value={studentId}
               placeholder="Enter your Student ID"
-              class="mt-1 block w-full px-4 py-2 bg-transparent border-2 text-black rounded-lg focus:ring-2 focus:ring-orange-400 focus:outline-none"
+              class="mt-1 block w-full px-4 py-2 bg-transparent border-2 text-white rounded-lg focus:ring-2 focus:ring-orange-400 focus:outline-none"
             />
           </div>
           <div class="mb-6">
@@ -200,7 +200,7 @@
               id="password"
               bind:value={password}
               placeholder="Enter your password"
-              class="mt-1 block w-full px-4 py-2 bg-transparent border-2 text-black rounded-lg focus:ring-2 focus:ring-orange-400 focus:outline-none"
+              class="mt-1 block w-full px-4 py-2 bg-transparent border-2 text-white rounded-lg focus:ring-2 focus:ring-orange-400 focus:outline-none"
             />
           </div>
           <button
