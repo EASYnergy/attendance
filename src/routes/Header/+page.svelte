@@ -4,6 +4,7 @@
     let isSideNavOpen = false;
     let isClosing = false;
     let fullName = ""; // Variable to store the logged-in user's name
+    let studentId = "";
 
     // Function to toggle the side navigation
     function toggleSideNav() {
@@ -56,6 +57,42 @@
         window.location.href = '/'; // Redirect to login page
     }
 
+    async function generateQRCode() {
+    try {
+        const response = await fetch(`/api/participant/${studentId}`);
+        if (!response.ok) {
+            throw new Error('Failed to generate QR code');
+        }
+        
+        const data = await response.json();
+        
+        if (data && data.qr_code) {
+            const qrCodeImg = document.createElement('img');
+            qrCodeImg.src = `data:image/png;base64,${data.qr_code}`;
+            
+            const qrCodeContainer = document.getElementById('qrCodeContainer');
+            if (qrCodeContainer) {
+                qrCodeContainer.appendChild(qrCodeImg);
+            } else {
+                console.error("QR Code container not found.");
+            }
+        } else {
+            alert("QR code not found.");
+        }
+        
+    } catch (error: unknown) {
+        if (error instanceof Error) {
+            console.error(error.message);
+            alert(error.message);
+        } else {
+            console.error("An unexpected error occurred.");
+            alert("An unexpected error occurred.");
+        }
+    }
+}
+
+
+
     // Mount component and fetch user details
     onMount(() => {
         fetchParticipantDetails();
@@ -88,7 +125,7 @@
 </style>
 
 <!-- Header Container -->
-<div class="header-container">
+<div class="header-container flex justify-between items-center p-4 bg-white shadow">
     <!-- EASYnergy Logo trigger -->
     <button
         id="easynergy-logo"
@@ -100,13 +137,20 @@
     </button>
 
     <!-- Logged-in User Info -->
-    <div class="user-info text-black text-lg">
+    <div class="user-info text-black text-lg flex items-center">
         {#if fullName}
             <span>Welcome, {fullName}!</span>
+            <button 
+                on:click={generateQRCode} 
+                class="ml-4 bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg transition-colors duration-200">
+                Generate QR Code
+            </button>
         {:else}
             <span>Loading participant details...</span>
         {/if}
     </div>
+
+    <div id='qrCodeContainer'></div>
 
     <!-- Right Side Logos -->
     <div class="right-logos">
